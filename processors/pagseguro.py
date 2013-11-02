@@ -27,11 +27,11 @@ class PagSeguroProcessor(BaseProcessor):
 
         self.pg.items = [
             {
-              "id": item.get_uid(),
-              "description": u"{i.title} - {i.description}".format(i=item),
-              "amount": item.total,
-              "weight": item.weight,
-              "quantity": item.quantity
+                "id": item.get_uid(),
+                "description": u"{i.title} - {i.description}".format(i=item),
+                "amount": item.total,
+                "weight": item.weight,
+                "quantity": item.quantity
             }
             for item in self.cart.items if item.total >= 0
         ]
@@ -47,7 +47,6 @@ class PagSeguroProcessor(BaseProcessor):
         else:
             self.pg.notification_url = current_app.config.get(
                 'PAGSEGURO_NOTIFICATION_URL')
-
 
     def process(self, *args, **kwargs):
         response = self.pg.checkout()

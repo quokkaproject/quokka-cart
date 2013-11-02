@@ -3,7 +3,7 @@ import logging
 from werkzeug.utils import import_string
 from flask import session, current_app
 from flask.ext.babel import lazy_gettext as _l
-from quokka.utils import get_current_user
+from quokka.utils import get_current_user, lazy_str_setting
 from quokka.core.db import db
 from quokka.core.models import Publishable, Ordered, Dated, Content
 
@@ -111,7 +111,12 @@ class Cart(Publishable, db.DynamicDocument):
     sender_data = db.DictField(default=lambda: {})
     shipping_data = db.DictField(default=lambda: {})
     shippping_cost = db.FloatField()
-    processor = db.StringField(default='quokka.modules.cart.processors.Dummy')
+    processor = db.StringField(
+        default=lazy_str_setting(
+            'CART_DEFAULT_PROCESSOR',
+            default='quokka.modules.cart.processors.Dummy'
+        )
+    )
 
     @classmethod
     def get_cart(cls):
