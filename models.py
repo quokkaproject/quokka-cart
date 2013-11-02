@@ -34,13 +34,16 @@ class Product(Content):
     def get_extra_value(self):
         return getattr(self, 'extra_value', None)
 
+    def get_uid(self):
+        return str(self.id)
+
     meta = {
         'allow_inheritance': True
     }
 
 
 class Item(Ordered, Dated, db.EmbeddedDocument):
-    product = db.GenericReferenceField()
+    product = db.ReferenceField(Product)
     uid = db.StringField()
     title = db.StringField(required=True, max_length=255)
     description = db.StringField(required=True)
@@ -63,6 +66,7 @@ class Item(Ordered, Dated, db.EmbeddedDocument):
             self.weight = self.weight or product.get_weight()
             self.dimensions = self.dimensions or product.get_dimensions()
             self.extra_value = self.extra_value or product.get_extra_value()
+            self.uid = self.uid or product.get_uid()
         except:
             logger.info("There is no product or error occurred")
 
@@ -91,9 +95,12 @@ class Cart(Publishable, db.DynamicDocument):
         ("abandoned", _l("Abandoned")),
     )
     reference = db.GenericReferenceField()
-    # reference must implement set_status method
-    # set_status receive status(str), value(float), date, uid(str), msg(str)
-    # and extra(dict)
+    """reference must implement set_status(**kwargs) method
+    arguments: status(str), value(float), date, uid(str), msg(str)
+    and extra(dict).
+    Also reference must implement get_uid() which will return
+    the unique identifier for this transaction"""
+
     belongs_to = db.ReferenceField('User', default=get_current_user)
     items = db.ListField(db.EmbeddedDocumentField(Item))
     payment = db.ListField(db.EmbeddedDocumentField(Payment))
