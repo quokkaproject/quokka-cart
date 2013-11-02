@@ -4,10 +4,39 @@ from werkzeug.utils import import_string
 from flask import session, current_app
 from quokka.utils import get_current_user
 from quokka.core.db import db
-from quokka.core.models import Publishable, Ordered, Dated
+from quokka.core.models import Publishable, Ordered, Dated, Content
 from flask.ext.babel import lazy_gettext as _l
 
 logger = logging.getLogger()
+
+
+class Product(Content):
+    unity_value = db.FloatField()
+    weight = db.FloatField()
+    dimensions = db.StringField()
+    extra_value = db.FloatField()
+
+    def get_title(self):
+        return getattr(self, 'title', None)
+
+    def get_description(self):
+        return getattr(self, 'description', None)
+
+    def get_unity_value(self):
+        return getattr(self, 'unity_value', None)
+
+    def get_weight(self):
+        return getattr(self, 'weight', None)
+
+    def get_dimensions(self):
+        return getattr(self, 'dimensions', None)
+
+    def get_extra_value(self):
+        return getattr(self, 'extra_value', None)
+
+    meta = {
+        'allow_inheritance': True
+    }
 
 
 class Item(Ordered, Dated, db.EmbeddedDocument):
@@ -29,7 +58,7 @@ class Item(Ordered, Dated, db.EmbeddedDocument):
             product = self.product
             self.title = self.title or product.get_title()
             self.description = self.description or product.get_description()
-            self.link = self.link or product.get_absolut_url()
+            self.link = self.link or product.get_absolute_url()
             self.unity_value = self.unity_value or product.get_unity_value()
             self.weight = self.weight or product.get_weight()
             self.dimensions = self.dimensions or product.get_dimensions()
