@@ -1,0 +1,18 @@
+
+{% extends theme("base.html") %}
+
+{% block page_header %}
+<div class="large-12 columns">
+  <div class="page-header">
+    <h1> {{  cart.reference  }}</h1>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="large-12 columns">
+  {% for item in cart.items %}
+      {{ item.description }} - {{ item.total_value }}
+  {% endfor %}
+</div>
+{% endblock %}
