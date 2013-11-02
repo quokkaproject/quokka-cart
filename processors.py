@@ -13,7 +13,7 @@ class BaseProcessor(object):
 
 
 class Dummy(BaseProcessor):
-    def validade(self, *args, **kwargs):
+    def validate(self, *args, **kwargs):
         items = self.cart.items
         print(items)
 

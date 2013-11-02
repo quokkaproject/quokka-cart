@@ -2,10 +2,11 @@
 import logging
 from werkzeug.utils import import_string
 from flask import session, current_app
+from flask.ext.babel import lazy_gettext as _l
 from quokka.utils import get_current_user
 from quokka.core.db import db
 from quokka.core.models import Publishable, Ordered, Dated, Content
-from flask.ext.babel import lazy_gettext as _l
+
 
 logger = logging.getLogger()
 
