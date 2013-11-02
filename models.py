@@ -92,6 +92,7 @@ class Cart(Publishable, db.DynamicDocument):
     STATUS = (
         ("pending", _l("Pending")),
         ("checked_out", _l("Checked out")),
+        ("confirmed", _l("Confirmed")),
         ("cancelled", _l("Cancelled")),
         ("abandoned", _l("Abandoned")),
     )
@@ -117,6 +118,7 @@ class Cart(Publishable, db.DynamicDocument):
             default='quokka.modules.cart.processors.Dummy'
         )
     )
+    checkout_code = db.StringField()  # The UID for transaction
 
     @classmethod
     def get_cart(cls):

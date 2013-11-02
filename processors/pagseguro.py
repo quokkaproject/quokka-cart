@@ -51,6 +51,9 @@ class PagSeguroProcessor(BaseProcessor):
     def process(self, *args, **kwargs):
         response = self.pg.checkout()
         if not response.errors:
+            self.cart.checkout_code = response.code
+            self.cart.status = 'checked_out'
+            self.cart.save()
             return redirect(response.payment_url)
         else:
             return render_template("cart/checkout_error.html",
