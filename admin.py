@@ -4,7 +4,7 @@
 from quokka import admin
 from quokka.core.admin.models import ModelAdmin
 
-from .models import Cart
+from .models import Cart, Processor
 
 
 class CartAdmin(ModelAdmin):
@@ -85,4 +85,9 @@ class CartAdmin(ModelAdmin):
     #}
 
 
+class ProcessorAdmin(ModelAdmin):
+    roles_accepted = ('admin', 'developer')
+
+
 admin.register(Cart, CartAdmin, category="Cart")
+admin.register(Processor, ProcessorAdmin, category="Cart")
