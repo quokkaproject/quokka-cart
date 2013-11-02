@@ -12,10 +12,10 @@ logger = logging.getLogger()
 
 
 class Product(Content):
-    unity_value = db.FloatField()
-    weight = db.FloatField()
+    unity_value = db.FloatField(default=0)
+    weight = db.FloatField(default=0)
     dimensions = db.StringField()
-    extra_value = db.FloatField()
+    extra_value = db.FloatField(default=0)
 
     def get_title(self):
         return getattr(self, 'title', None)
@@ -50,11 +50,17 @@ class Item(Ordered, Dated, db.EmbeddedDocument):
     description = db.StringField(required=True)
     link = db.StringField()
     quantity = db.FloatField(default=1)
-    unity_value = db.FloatField(required=True)
-    total_value = db.FloatField(required=True)
-    weight = db.FloatField()
+    unity_value = db.FloatField(required=True, default=0)
+    total_value = db.FloatField()
+    weight = db.FloatField(default=0)
     dimensions = db.StringField()
-    extra_value = db.FloatField()
+    extra_value = db.FloatField(default=0)
+
+    def get_uid(self):
+        try:
+            return self.product.get_uid()
+        except:
+            return self.uid
 
     @property
     def total(self):
