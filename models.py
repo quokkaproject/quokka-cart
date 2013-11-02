@@ -228,7 +228,7 @@ class Cart(Publishable, db.DynamicDocument):
         self.set_processor(processor)
         processor_instance = self.processor.get_instance(self, *args, **kwargs)
         if processor_instance.validate():
-            processor_instance.process()
+            return processor_instance.process()
         else:
             raise Exception("Cart did not validate")  # todo: specialize this
 
