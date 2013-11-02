@@ -10,12 +10,3 @@ class BaseProcessor(object):
 
     def process(self, *args, **kwargs):
         raise NotImplementedError()
-
-
-class Dummy(BaseProcessor):
-    def validate(self, *args, **kwargs):
-        items = self.cart.items
-        print(items)
-
-    def process(self, *args, **kwargs):
-        print("Cheking out %s" % self.cart.id)
