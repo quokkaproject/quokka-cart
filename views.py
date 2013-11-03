@@ -14,7 +14,6 @@ class CartView(MethodView):
 
     def get_context(self):
         cart = Cart.get_cart()
-        cart.assign()
         context = {
             "cart": cart
         }

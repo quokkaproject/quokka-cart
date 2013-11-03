@@ -168,6 +168,7 @@ class Cart(Publishable, db.DynamicDocument):
                                   required=True,
                                   default=Processor.get_default_processor)
     checkout_code = db.StringField()  # The UID for transaction
+    requires_login = db.BooleanField(default=True)
 
     @property
     def uid(self):
@@ -189,14 +190,18 @@ class Cart(Publishable, db.DynamicDocument):
     @classmethod
     def get_cart(cls):
         """
-        create a new cart related to the session
+        get or create a new cart related to the session
         if there is a current logged in user it will be set
         else it will be set during the checkout.
         """
         session.permanent = current_app.config.get(
             "CART_PERMANENT_SESSION", True)
         try:
-            cart = cls.objects.get(id=session.get('cart_id'))
+            cart = cls.objects.get(
+                id=session.get('cart_id'),
+                status='pending'
+            )
+            cart.save()
         except Exception:
             cart = cls(status="pending")
             cart.save()
@@ -241,6 +246,7 @@ class Cart(Publishable, db.DynamicDocument):
 
         if isinstance(processor, Processor):
             self.processor = processor
+            self.save()
             return
 
         try:
@@ -249,9 +255,3 @@ class Cart(Publishable, db.DynamicDocument):
             self.processor = Processor.objects.get(identifier=processor)
 
         self.save()
-
-    def remove_item(self, uid):
-        pass
-
-    def cancel(self):
-        self.status = 'cancelled'

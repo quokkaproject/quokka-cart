@@ -25,7 +25,7 @@ class PagSeguroProcessor(BaseProcessor):
         self.pg.reference = self.cart.get_uid()
         extra_costs = self.cart.get_extra_costs()
         if extra_costs:
-            self.pg.extra_amount = "%.2f" %  extra_costs
+            self.pg.extra_amount = "%.2f" % extra_costs
 
         self.pg.items = [
             {
@@ -49,7 +49,7 @@ class PagSeguroProcessor(BaseProcessor):
             self.pg.notification_url = self.config.get('notification_url')
 
         logger.debug("Processor validated {}".format(self.__dict__))
-        return True # all data is valid
+        return True  # all data is valid
 
     def process(self, *args, **kwargs):
         response = self.pg.checkout()
