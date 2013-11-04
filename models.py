@@ -220,7 +220,7 @@ class Cart(Publishable, db.DynamicDocument):
                 status='pending'
             )
             cart.save()
-        except cart.DoesNotExist:
+        except (cls.DoesNotExist, db.ValidationError):
             cart = cls(status="pending")
             cart.save()
             session['cart_id'] = str(cart.id)
