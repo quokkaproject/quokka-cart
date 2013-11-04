@@ -228,18 +228,43 @@ class Cart(Publishable, db.DynamicDocument):
         self.assign()
         super(Cart, self).save(*args, **kwargs)
 
-    def add_item(self, **kwargs):
-        uid = kwargs.get('uid')
+    def get_item(self, uid):
+        # MongoEngine/mongoengine#503
+        return self.items.get(uid=uid)
+
+    def set_item(self, **kwargs):
+        if 'product' in kwargs:
+            if not isinstance(kwargs['product'], Product):
+                try:
+                    kwargs['product'] = Product.objects.get(
+                        id=kwargs['product'])
+                except Product.DoesNotExist:
+                    kwargs['product'] = None
+
+        uid = kwargs.get(
+            'uid',
+            kwargs['product'].get_uid() if kwargs.get('product') else None
+        )
 
         if not uid:
             logger.warning("Cannot add item without an uid %s" % kwargs)
             return
 
-        # check if item already exist and only update its values
+        item = self.get_item(uid)
 
-        item = Item(**kwargs)
-        self.items.append(item)
+        kwargs = Item.normalize(kwargs)
+
+        if not item:
+            item = self.items.create(**kwargs)
+        else:
+            item = self.items.update(kwargs, uid=item.uid)
+
         self.save()
+        self.reload()
+        return item
+
+    def remove_item(self, **kwargs):
+        return self.items.delete(**kwargs)
 
     def checkout(self, processor=None, *args, **kwargs):
         self.set_processor(processor)
