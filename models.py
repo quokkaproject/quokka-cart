@@ -56,6 +56,17 @@ class Item(Ordered, Dated, db.EmbeddedDocument):
     dimensions = db.StringField()
     extra_value = db.FloatField(default=0)
 
+    @classmethod
+    def normalize(cls, kwargs):
+        new = {}
+        for k, v in kwargs.items():
+            field = cls._fields[k]
+            new[k] = field.to_python(v)
+        return new
+
+    def __unicode__(self):
+        return u"{i.uid} {i.title}".format(i=self)
+
     def get_uid(self):
         try:
             return self.product.get_uid()
