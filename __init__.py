@@ -29,7 +29,7 @@ in ajax request it will return JSON as response
     - different things can be done via api ex: config shipping
 /cart/setitem
     - receives a POST with item information
-    - if "item_id" is present it will be updated else created
+    - if "uid" is present ans item exists it will be updated else created
     - "product" reference is passed as an "id" and converted to a reference
     - receive quantity, weight etc..
     - if "next" is present redirect to there else redirect to "/cart"
