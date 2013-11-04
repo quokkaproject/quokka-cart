@@ -88,8 +88,9 @@ class Item(Ordered, Dated, db.EmbeddedDocument):
         except:
             logger.info("There is no product or error occurred")
 
-        self.total_value = (self.unity_value *
-                            self.quantity) + self.extra_value
+        self.total_value = (
+            float(self.unity_value or 0) * float(self.quantity or 0)
+        ) + float(self.extra_value or 0)
 
         return self.total_value
 
