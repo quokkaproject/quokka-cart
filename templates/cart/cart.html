@@ -4,15 +4,71 @@
 {% block page_header %}
 <div class="large-12 columns">
   <div class="page-header">
-    <h1> {{  cart.reference  }}</h1>
+    <h1> Cart </h1>
   </div>
 </div>
 {% endblock %}
 
 {% block content %}
 <div class="large-12 columns">
-  {% for item in cart.items %}
-      {{ item.description }} - {{ item.total_value }}
-  {% endfor %}
+  <table class="large-12">
+      <thead>
+          <tr>
+             <th>Product </th>
+             <th>Unity value </th>
+             <th>Extra value </th>
+             <th>Quantity </th>
+             <th>Total </th>
+             <th>Actions </th>
+          </tr>
+      </thead>
+      <tbody>
+      {% for item in cart.items %}
+          <tr>
+              <td>
+                 <h5>{{ item.title }}</h5>
+                 <p>{{ item.description|truncate(140) }}</p>
+              </td>
+              <td>$ {{"%.2f" % item.unity_value}} </td>
+              <td>$ {{"%.2f" % item.extra_value}} </td>
+              <td>
+                <form action="{{url_for('cart.setitem')}}" method="POST">
+                  <input type="hidden" value="{{item.uid}}" name="uid">
+                  <input type="text" value="{{ item.quantity|int }}" name="quantity" onchange="$(this).parent().submit()">
+                </form>
+              </td>
+              <td>$ {{"%.2f" % item.total}} </td>
+              <td>
+                 <form action="{{url_for('cart.removeitem')}}" method="POST">
+                    <input type="hidden" value="{{item.uid}}" name="uid">
+                    <input type="submit" value="x" class="button" title="remove item">
+                 </form>
+              </td>
+          </tr>
+      {% endfor %}
+          <tr>
+              <td colspan="2"></td>
+              <td> $ {{"%.2f" % cart.items|sum(attribute="extra_value")}} </td>
+              <td> {{ cart.items|sum(attribute="quantity")|int }} </td>
+              <td colspan="2"> $ {{ "%.2f" % cart.total }} </td>
+          </tr>
+      </tbody>
+  </table>
+
+  <form action="{{url_for('cart.checkout')}}" method="POST">
+      <fieldset>
+         <legend>Payment</legend>
+      {%for processor in cart.get_available_processors() %}
+           <label for="processor_{{processor.identifier}}">
+               <input type="radio" id="processor_{{processor.identifier}}" name="processor" value="{{processor.identifier}}" {% if processor == cart.processor %}checked{% endif %}>
+            {{processor.title}}
+            </label>
+      {% endfor %}
+      </fieldset>
+
+      <br>
+      <a href="{{cart.continue_shopping_url}}" class="button btn">Continue shopping</a>
+      <input type="submit" value="Checkout" class="button btn">
+  </form>
 </div>
 {% endblock %}

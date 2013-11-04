@@ -4,6 +4,7 @@ import json
 from flask import request, jsonify, redirect
 from flask.views import MethodView
 from quokka.core.templates import render_template
+from quokka.utils import get_current_user
 
 from .models import Cart
 
@@ -82,4 +83,8 @@ class CheckoutView(BaseView):
 
 
 class HistoryView(BaseView):
-    pass
+    def get(self):
+        context = {
+            "carts": Cart.objects(belongs_to=get_current_user())
+        }
+        return self.render('cart/history.html', **context)

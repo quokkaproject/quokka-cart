@@ -55,6 +55,8 @@ class Item(Ordered, Dated, db.EmbeddedDocument):
     weight = db.FloatField(default=0)
     dimensions = db.StringField()
     extra_value = db.FloatField(default=0)
+    allowed_to_set = db.ListField(db.StringField(), default=['quantity'])
+    pipeline = db.ListField(db.StringField(), default=[])
 
     @classmethod
     def normalize(cls, kwargs):
@@ -115,6 +117,7 @@ class Processor(Publishable, db.DynamicDocument):
     image = db.ReferenceField('Image')
     link = db.StringField()
     config = db.DictField(default=lambda: {})
+    pipeline = db.ListField(db.StringField(), default=[])
 
     def import_processor(self):
         return import_string(self.module)
@@ -159,6 +162,7 @@ class Cart(Publishable, db.DynamicDocument):
         ("confirmed", _l("Confirmed")),
         ("cancelled", _l("Cancelled")),
         ("abandoned", _l("Abandoned")),
+        ("completed", _l("Completed")),
     )
     reference = db.GenericReferenceField()
     """reference must implement set_status(**kwargs) method
@@ -181,6 +185,8 @@ class Cart(Publishable, db.DynamicDocument):
                                   default=Processor.get_default_processor)
     checkout_code = db.StringField()  # The UID for transaction
     requires_login = db.BooleanField(default=True)
+    continue_shopping_url = db.StringField(default="/")
+    pipeline = db.ListField(db.StringField(), default=[])
 
     @property
     def uid(self):
@@ -214,7 +220,7 @@ class Cart(Publishable, db.DynamicDocument):
                 status='pending'
             )
             cart.save()
-        except Exception:
+        except cart.DoesNotExist:
             cart = cls(status="pending")
             cart.save()
             session['cart_id'] = str(cart.id)
@@ -255,9 +261,22 @@ class Cart(Publishable, db.DynamicDocument):
         kwargs = Item.normalize(kwargs)
 
         if not item:
-            item = self.items.create(**kwargs)
+            # items should only be added if there is a product (for safety)
+            if not kwargs.get('product'):
+                return
+            allowed = ['product', 'quantity']
+            item = self.items.create(
+                **{k: v for k, v in kwargs.items() if k in allowed}
+            )
         else:
-            item = self.items.update(kwargs, uid=item.uid)
+            # update only allowed attributes
+            item = self.items.update(
+                {k: v for k, v in kwargs.items() if k in item.allowed_to_set},
+                uid=item.uid
+            )
+
+            if int(kwargs.get('quantity', "1")) == 0:
+                self.remove_item(**kwargs)
 
         self.save()
         self.reload()
@@ -274,9 +293,10 @@ class Cart(Publishable, db.DynamicDocument):
         else:
             raise Exception("Cart did not validate")  # todo: specialize this
 
-    def set_processor(self, processor):
+    def set_processor(self, processor=None):
         if not self.processor:
             self.processor = Processor.get_default_processor()
+            self.save()
 
         if not processor:
             return
@@ -292,3 +312,6 @@ class Cart(Publishable, db.DynamicDocument):
             self.processor = Processor.objects.get(identifier=processor)
 
         self.save()
+
+    def get_available_processors(self):
+        return Processor.objects(published=True)
