@@ -4,8 +4,18 @@ from quokka.core.app import QuokkaModule
 module = QuokkaModule("cart", __name__,
                       template_folder="templates", static_folder="static")
 
-from .views import CartView
+from .views import CartView, SetItemView, RemoveItemView, SetProcessorView, \
+    CheckoutView, HistoryView
 module.add_url_rule('/cart/', view_func=CartView.as_view('cart'))
+module.add_url_rule('/cart/setitem/', view_func=SetItemView.as_view('setitem'))
+module.add_url_rule('/cart/removeitem/',
+                    view_func=RemoveItemView.as_view('removeitem'))
+module.add_url_rule('/cart/setprocessor/',
+                    view_func=SetProcessorView.as_view('setprocessor'))
+module.add_url_rule('/cart/checkout/',
+                    view_func=CheckoutView.as_view('checkout'))
+module.add_url_rule('/cart/history/', view_func=HistoryView.as_view('history'))
+
 """
 Every url accepts ajax requests, and so do not redirect anything.
 in ajax request it will return JSON as response
