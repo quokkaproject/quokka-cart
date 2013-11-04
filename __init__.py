@@ -38,8 +38,6 @@ in ajax request it will return JSON as response
     - use 'next' to redirect or '/cart'
 /cart/setprocessor
     - receives a POST with processor identifier or id
-/cart/setowner
-    - requires logged in user
 /cart/setstatus
     - user can set only from abandoned to pending
     - if there is a current 'pending' cart it will be set to 'abandoned'
