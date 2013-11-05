@@ -118,5 +118,6 @@ class ProcessorAdmin(ModelAdmin):
     roles_accepted = ('admin', 'developer')
 
 
-admin.register(Cart, CartAdmin, category="Cart")
-admin.register(Processor, ProcessorAdmin, category="Cart")
+admin.register(Cart, CartAdmin, category=_("Cart"), name=_l("Cart"))
+admin.register(Processor, ProcessorAdmin, category=_("Cart"),
+               name=_l("Processor"))
