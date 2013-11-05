@@ -106,3 +106,22 @@ class HistoryView(BaseView):
         return self.needs_login(next=url_for('cart.history')) or self.render(
             'cart/history.html', **context
         )
+
+
+class ProcessorView(View):
+    methods = ['GET', 'POST']
+
+    def get_processor(self, identifier):
+        return Processor.get_instance_by_identifier(identifier)
+
+
+class NotificationView(ProcessorView):
+    def dispatch_request(self, identifier):
+        processor = self.get_processor(identifier)
+        return processor.notification()
+
+
+class ConfirmationView(ProcessorView):
+    def dispatch_request(self, identifier):
+        processor = self.get_processor(identifier)
+        return processor.confirmation()
