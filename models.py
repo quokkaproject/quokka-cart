@@ -137,7 +137,7 @@ class Processor(Publishable, db.DynamicDocument):
     requires = db.ListField(db.StringField())
     description = db.StringField()
     title = db.StringField()
-    image = db.ReferenceField('Image')
+    image = db.ReferenceField(Image)
     link = db.StringField()
     config = db.DictField(default=lambda: {})
     pipeline = db.ListField(db.StringField(), default=[])
