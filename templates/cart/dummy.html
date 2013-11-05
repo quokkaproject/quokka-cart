@@ -1,0 +1,19 @@
+{% extends theme('cart/cart_base.html') %}
+
+{% block content %}
+
+<h2> Dummy processed </h2>
+
+{% for item in cart.log %}
+    {{item}}<br />
+{% endfor %}
+
+<hr>
+
+{% for item in cart.__dict__ %}
+
+   {{item}} - {{cart.__dict__[item]}}<br>
+
+{% endfor %}
+
+{% endblock %}

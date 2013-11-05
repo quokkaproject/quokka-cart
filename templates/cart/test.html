@@ -1,0 +1,21 @@
+{% extends theme('cart/cart_base.html') %}
+
+{% block content %}
+
+  <form action="{{url_for('cart.checkout')}}" method="POST">
+      <fieldset>
+     <legend>Payment</legend>
+      {%for processor in cart.get_available_processors() %}
+       <label for="processor_{{processor.identifier}}">
+	   <input onchange="ajax_set_processor($(this).val())" type="radio" id="processor_{{processor.identifier}}" name="processor" value="{{processor.identifier}}" {% if processor == cart.processor %}checked{% endif %}>
+	{{processor.title}}
+	</label>
+      {% endfor %}
+      </fieldset>
+
+      <br>
+      <a href="{{cart.continue_shopping_url}}" class="button btn">Continue shopping</a>
+      <input type="submit" value="Checkout" class="button btn">
+  </form>
+
+{% endblock %}
