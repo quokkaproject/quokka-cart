@@ -38,10 +38,10 @@ class BaseProductReference(object):
 
 class BaseProduct(BaseProductReference, Content):
     description = db.StringField(required=True)
-    unity_value = db.FloatField(default=0)
-    weight = db.FloatField(default=0)
+    unity_value = db.FloatField()
+    weight = db.FloatField()
     dimensions = db.StringField()
-    extra_value = db.FloatField(default=0)
+    extra_value = db.FloatField()
 
 
     meta = {
