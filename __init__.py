@@ -5,7 +5,8 @@ module = QuokkaModule("cart", __name__,
                       template_folder="templates", static_folder="static")
 
 from .views import CartView, SetItemView, RemoveItemView, SetProcessorView, \
-    CheckoutView, HistoryView
+    CheckoutView, HistoryView, ConfirmationView, NotificationView
+
 module.add_url_rule('/cart/', view_func=CartView.as_view('cart'))
 module.add_url_rule('/cart/setitem/', view_func=SetItemView.as_view('setitem'))
 module.add_url_rule('/cart/removeitem/',
@@ -15,12 +16,16 @@ module.add_url_rule('/cart/setprocessor/',
 module.add_url_rule('/cart/checkout/',
                     view_func=CheckoutView.as_view('checkout'))
 module.add_url_rule('/cart/history/', view_func=HistoryView.as_view('history'))
+module.add_url_rule('/cart/confirmation/<identifier>/',
+                    view_func=ConfirmationView.as_view('confirmation'))
+module.add_url_rule('/cart/notification/<identifier>/',
+                    view_func=NotificationView.as_view('notification'))
 
 """
 Every url accepts ajax requests, and so do not redirect anything.
 in ajax request it will return JSON as response
 /cart
-    - if there is a cart, but it is checked_out, create a new one
+    - if there is a cart, but it is checked_out, create a new one (if has item)
     - show a link to cart history if any
     - show the cart to the user
     - context is "cart"
@@ -67,4 +72,3 @@ in ajax request it will return JSON as response
    - context is carts
    - user must be logged in
 """
-# module.add_url_rule('/cart/<slug>/', view_func=DetailView.as_view('detail'))
