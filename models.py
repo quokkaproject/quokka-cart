@@ -92,22 +92,32 @@ class Item(Ordered, Dated, db.EmbeddedDocument):
 
     @property
     def total(self):
-        try:
-            product = self.product
-            self.title = self.title or product.get_title()
-            self.description = self.description or product.get_description()
-            self.link = self.link or product.get_absolute_url()
-            self.unity_value = self.unity_value or product.get_unity_value()
-            self.weight = self.weight or product.get_weight()
-            self.dimensions = self.dimensions or product.get_dimensions()
-            self.extra_value = self.extra_value or product.get_extra_value()
-            self.uid = self.uid or product.get_uid()
-        except:
-            logger.info("There is no product or error occurred")
-
+        self.clean()
         self.total_value = self.unity_plus_extra * float(self.quantity or 1)
-
         return self.total_value
+
+    def clean(self):
+        mapping = [
+            ('title', 'get_title'),
+            ('description', 'get_description'),
+            ('link', 'get_absolute_url'),
+            ('unity_value', 'get_unity_value'),
+            ('weight', 'get_weight'),
+            ('dimensions', 'get_dimensions'),
+            ('extra_value', 'get_extra_value'),
+            ('uid', 'get_uid'),
+        ]
+
+        references = [self.reference, self.product]
+
+        for ref in references:
+            if not ref:
+                continue
+            for attr, method in mapping:
+                current = getattr(self, attr, None)
+                if current is not None:
+                    continue
+                setattr(self, attr, getattr(ref, method, lambda: None)())
 
 
 class Payment(db.EmbeddedDocument):
