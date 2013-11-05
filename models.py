@@ -8,17 +8,12 @@ from quokka.utils import get_current_user, lazy_str_setting
 from quokka.core.templates import render_template
 from quokka.core.db import db
 from quokka.core.models import Publishable, Ordered, Dated, Content
-
+from quokka.modules.media.models import Image
 
 logger = logging.getLogger()
 
 
-class Product(Content):
-    unity_value = db.FloatField(default=0)
-    weight = db.FloatField(default=0)
-    dimensions = db.StringField()
-    extra_value = db.FloatField(default=0)
-
+class BaseProductReference(object):
     def get_title(self):
         return getattr(self, 'title', None)
 
@@ -40,23 +35,37 @@ class Product(Content):
     def get_uid(self):
         return str(self.id)
 
+
+class BaseProduct(BaseProductReference, Content):
+    description = db.StringField(required=True)
+    unity_value = db.FloatField(default=0)
+    weight = db.FloatField(default=0)
+    dimensions = db.StringField()
+    extra_value = db.FloatField(default=0)
+
+
     meta = {
         'allow_inheritance': True
     }
 
 
 class Item(Ordered, Dated, db.EmbeddedDocument):
-    product = db.ReferenceField(Product)
+    product = db.ReferenceField(Content)
+    reference = db.GenericReferenceField()  # customized product
+    """
+    Must implement all the BaseProduct methods/ its optional
+    if None, "product" will be considered
+    """
     uid = db.StringField()
     title = db.StringField(required=True, max_length=255)
     description = db.StringField(required=True)
     link = db.StringField()
     quantity = db.FloatField(default=1)
-    unity_value = db.FloatField(required=True, default=0)
+    unity_value = db.FloatField(required=True)
     total_value = db.FloatField()
-    weight = db.FloatField(default=0)
+    weight = db.FloatField()
     dimensions = db.StringField()
-    extra_value = db.FloatField(default=0)
+    extra_value = db.FloatField()
     allowed_to_set = db.ListField(db.StringField(), default=['quantity'])
     pipeline = db.ListField(db.StringField(), default=[])
 
