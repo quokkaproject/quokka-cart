@@ -191,6 +191,12 @@ class Cart(Publishable, db.DynamicDocument):
     requires_login = db.BooleanField(default=True)
     continue_shopping_url = db.StringField(default="/")
     pipeline = db.ListField(db.StringField(), default=[])
+    log = db.ListField(db.StringField(), default=[])
+
+    def addlog(self, msg, save=True):
+        self.log.append(u"{0},{1}".format(datetime.datetime.now(), msg))
+        logger.debug(msg)
+        save and self.save()
 
     @property
     def uid(self):
