@@ -2,9 +2,38 @@
 #from flask.ext.htmlbuilder import html
 #from flask.ext.admin.babel import lazy_gettext
 from quokka import admin
+from quokka.modules.posts.admin import PostAdmin
 from quokka.core.admin.models import ModelAdmin
-
+from quokka.core.admin import _, _l
 from .models import Cart, Processor
+
+
+class ProductAdmin(PostAdmin):
+    column_list = ('title', 'slug', 'channel',
+                   'unity_value', 'weight',
+                   'published', 'created_at',
+                   'available_at', 'view_on_site')
+    column_searchable_list = ['title', 'summary', 'description']
+    form_columns = [
+        'title', 'slug', 'channel', 'related_channels',  'summary',
+        'description', 'unity_value', 'weight', 'dimensions', 'extra_value',
+        'published', 'show_on_channel',
+        'available_at', 'available_until',
+        'tags', 'contents', 'values', 'template_type'
+    ]
+    form_widget_args = {
+        'description': {
+            'rows': 20,
+            'cols': 20,
+            'class': 'text_editor',
+            'style': "margin: 0px; width: 725px; height: 360px;"
+        },
+        'summary': {
+            'style': 'width: 400px; height: 100px;'
+        },
+        'title': {'style': 'width: 400px'},
+        'slug': {'style': 'width: 400px'},
+    }
 
 
 class CartAdmin(ModelAdmin):
