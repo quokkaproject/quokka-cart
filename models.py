@@ -1,9 +1,11 @@
 # coding: utf-8
+import datetime
 import logging
 from werkzeug.utils import import_string
 from flask import session, current_app
 from flask.ext.babel import lazy_gettext as _l
 from quokka.utils import get_current_user, lazy_str_setting
+from quokka.core.templates import render_template
 from quokka.core.db import db
 from quokka.core.models import Publishable, Ordered, Dated, Content
 
@@ -76,6 +78,10 @@ class Item(Ordered, Dated, db.EmbeddedDocument):
             return self.uid
 
     @property
+    def unity_plus_extra(self):
+        return float(self.unity_value or 0) + float(self.extra_value or 0)
+
+    @property
     def total(self):
         try:
             product = self.product
@@ -90,9 +96,7 @@ class Item(Ordered, Dated, db.EmbeddedDocument):
         except:
             logger.info("There is no product or error occurred")
 
-        self.total_value = (
-            float(self.unity_value or 0) * float(self.quantity or 0)
-        ) + float(self.extra_value or 0)
+        self.total_value = self.unity_plus_extra * float(self.quantity or 1)
 
         return self.total_value
 
