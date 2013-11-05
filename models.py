@@ -303,6 +303,32 @@ class Cart(Publishable, db.DynamicDocument):
         else:
             raise Exception("Cart did not validate")  # todo: specialize this
 
+    def get_items_pipeline(self):
+        if not self.items:
+            return []
+
+        return reduce(
+            lambda x, y: x + y, [item.pipeline for item in self.items]
+        )
+
+    def build_pipeline(self):
+        items = ['quokka.modules.cart.pipelines:StartPipeline']
+        items.extend(current_app.config.get('CART_PIPELINE', []))
+        items.extend(self.get_items_pipeline())
+        items.extend(self.pipeline)
+        items.extend(self.processor and self.processor.pipeline or [])
+        return items
+
+    def process_pipeline(self):
+        if not self.items:
+            return render_template('cart/empty_cart.html',
+                                   url=self.continue_shopping_url)
+
+        pipelines = self.build_pipeline()
+        index = session.get('cart_pipeline_index', 0)
+        Pipeline = import_string(pipelines[index])
+        return Pipeline(self, pipelines, index)._preprocess()
+
     def set_processor(self, processor=None):
         if not self.processor:
             self.processor = Processor.get_default_processor()
