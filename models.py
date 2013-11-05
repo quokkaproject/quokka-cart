@@ -216,7 +216,7 @@ class Cart(Publishable, db.DynamicDocument):
 
     def get_uid(self):
         try:
-            return self.reference.get_uid()
+            return self.reference.get_uid() or str(self.id)
         except:
             return str(self.id)
 
@@ -255,6 +255,9 @@ class Cart(Publishable, db.DynamicDocument):
         self.total = sum([item.total for item in self.items])
         self.assign()
         super(Cart, self).save(*args, **kwargs)
+        if not self.reference_code:
+            self.reference_code = self.get_uid()
+            self.save()
 
     def get_item(self, uid):
         # MongoEngine/mongoengine#503
