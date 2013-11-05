@@ -129,6 +129,7 @@ class Processor(Publishable, db.DynamicDocument):
     def get_instance(self, *args, **kwargs):
         if not 'config' in kwargs:
             kwargs['config'] = self.config
+        kwargs['_record'] = self
         return self.import_processor()(*args, **kwargs)
 
     def clean(self, *args, **kwargs):
@@ -138,6 +139,11 @@ class Processor(Publishable, db.DynamicDocument):
 
     def __unicode__(self):
         return self.identifier
+
+    @classmethod
+    def get_instance_by_identifier(cls, identifier, cart=None):
+        processor = cls.objects.get(identifier=identifier)
+        return processor.get_instance(cart=cart)
 
     @classmethod
     def get_default_processor(cls):
