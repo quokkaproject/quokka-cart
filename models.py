@@ -196,11 +196,14 @@ class Cart(Publishable, db.DynamicDocument):
     processor = db.ReferenceField(Processor,
                                   required=True,
                                   default=Processor.get_default_processor)
-    checkout_code = db.StringField()  # The UID for transaction
+    reference_code = db.StringField()  # Reference code for filtering
+    checkout_code = db.StringField()  # The UID for transaction checkout
+    transaction_code = db.StringField()  # The UID for transaction
     requires_login = db.BooleanField(default=True)
     continue_shopping_url = db.StringField(default="/")
     pipeline = db.ListField(db.StringField(), default=[])
     log = db.ListField(db.StringField(), default=[])
+    config = db.DictField(default=lambda: {})
 
     def addlog(self, msg, save=True):
         self.log.append(u"{0},{1}".format(datetime.datetime.now(), msg))
