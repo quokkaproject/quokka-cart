@@ -1,23 +1,38 @@
 # coding: utf-8
 import logging
-from flask import redirect
+from flask import redirect, request
 from pagseguro import PagSeguro
 from quokka.core.templates import render_template
 from .base import BaseProcessor
+from ..models import Cart
 
 logger = logging.getLogger()
 
 
 class PagSeguroProcessor(BaseProcessor):
+
+    STATUS_MAP = {
+        "1": "checked_out",
+        "2": "analysing",
+        "3": "confirmed",
+        "4": "completed",
+        "5": "refunding",
+        "6": "refunded",
+        "7": "cancelled"
+    }
+
     def __init__(self, cart, *args, **kwargs):
         self.cart = cart
         self.config = kwargs.get('config')
+        self._record = kwargs.get('_record')
         if not isinstance(self.config, dict):
             raise ValueError("Config must be a dict")
         email = self.config.get('email')
         token = self.config.get('token')
         self.pg = PagSeguro(email=email, token=token)
-        logger.debug("Processor initialized {}".format(self.__dict__))
+        self.cart and self.cart.addlog(
+            "PagSeguro initialized {}".format(self.__dict__)
+        )
 
     def validate(self, *args, **kwargs):
         self.pg.sender = self.cart.sender_data
