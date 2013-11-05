@@ -284,11 +284,11 @@ class Cart(Publishable, db.DynamicDocument):
 
     def set_item(self, **kwargs):
         if 'product' in kwargs:
-            if not isinstance(kwargs['product'], Product):
+            if not isinstance(kwargs['product'], Content):
                 try:
-                    kwargs['product'] = Product.objects.get(
+                    kwargs['product'] = Content.objects.get(
                         id=kwargs['product'])
-                except Product.DoesNotExist:
+                except Content.DoesNotExist:
                     kwargs['product'] = None
 
         uid = kwargs.get(
