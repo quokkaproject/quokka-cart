@@ -3,4 +3,7 @@
 {% block content %}
 <span class="alert"> Your cart is empty</span><br/>
 <a href="{{url}}" class="button btn">Continue shopping</a>
+{% if current_user.is_authenticated() %}
+    <a class="button btn" href="{{url_for('cart.history')}}">Purchase history</a>
+{% endif %}
 {% endblock %}

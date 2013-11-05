@@ -7,10 +7,6 @@
        $.post("{{ url_for('cart.setprocessor')}}", {"processor": processor});
    }
 
-   $(function(){
-
-   })
-
 </script>
 {% endblock %}
 
@@ -73,7 +69,17 @@
 
       <br>
       <a href="{{cart.continue_shopping_url}}" class="button btn">Continue shopping</a>
-      <input type="submit" value="Checkout" class="button btn">
-  </form>
+
+     {%if current_user.is_authenticated() or not cart.requires_login %}
+	  <input type="submit" value="Checkout" class="button btn">
+     {% else %}
+	  <a href="{{url_for_security('login', next=url_for('cart.cart'))}}">Login and checkout</a>
+     {% endif %}
+
+ </form>
+
+{% if current_user.is_authenticated() %}
+    <a href="{{url_for('cart.history')}}">Purchase history</a>
+{% endif %}
 </div>
 {% endblock %}

@@ -2,12 +2,12 @@
 # -*- coding: utf-8 -*-
 import json
 from flask import request, jsonify, redirect, url_for, session, current_app
-from flask.views import MethodView
+from flask.views import View, MethodView
 from quokka.core.templates import render_template
 from quokka.utils import get_current_user
 from flask.ext.security import current_user
 from flask.ext.security.utils import url_for_security
-from .models import Cart
+from .models import Cart, Processor
 
 import logging
 logger = logging.getLogger()

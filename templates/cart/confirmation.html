@@ -1,0 +1,46 @@
+{% extends theme('cart/cart_base.html') %}
+{% block content %}
+<div class="large-12 columns">
+  <table class="large-12">
+      <thead>
+      <tr>
+	 <th>Product </th>
+	 <th>Unity value </th>
+	 <th>Extra value </th>
+	 <th>Quantity </th>
+	 <th>Total </th>
+      </tr>
+      </thead>
+      <tbody>
+      {% for item in cart.items %}
+      <tr>
+	  <td>
+	 <h5>{{ item.title }}</h5>
+	 <p>{{ item.description|truncate(140) }}</p>
+	  </td>
+	  <td>$ {{"%.2f" % item.unity_value}} </td>
+	  <td>$ {{"%.2f" % item.extra_value}} </td>
+	  <td>
+	     {{item.quantity|int}}
+	  </td>
+	  <td>$ {{"%.2f" % item.total}} </td>
+
+      </tr>
+      {% endfor %}
+      <tr>
+	  <td colspan="2"></td>
+	  <td> $ {{"%.2f" % cart.items|sum(attribute="extra_value")}} </td>
+	  <td> {{ cart.items|sum(attribute="quantity")|int }} </td>
+	  <td colspan="2"> $ {{ "%.2f" % cart.total }} </td>
+      </tr>
+      </tbody>
+  </table>
+
+    {{ transaction_code }}
+
+      <a href="{{cart.continue_shopping_url}}" class="button btn">Continue shopping</a>
+{% if current_user.is_authenticated() %}
+    <a href="{{url_for('cart.history')}}">Purchase history</a>
+{% endif %}
+</div>
+{% endblock %}
