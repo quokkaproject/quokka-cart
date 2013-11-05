@@ -31,7 +31,7 @@ class PagSeguroProcessor(BaseProcessor):
             {
                 "id": item.get_uid(),
                 "description": u"{i.title} - {i.description}".format(i=item),
-                "amount": "%.2f" % item.total,
+                "amount": "%.2f" % item.unity_plus_extra,
                 "weight": item.weight,
                 "quantity": int(item.quantity)
             }

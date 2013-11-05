@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import json
-from flask import request, jsonify, redirect
+from flask import request, jsonify, redirect, url_for, session, current_app
 from flask.views import MethodView
 from quokka.core.templates import render_template
 from quokka.utils import get_current_user
-
+from flask.ext.security import current_user
+from flask.ext.security.utils import url_for_security
 from .models import Cart
 
 import logging
@@ -13,6 +14,14 @@ logger = logging.getLogger()
 
 
 class BaseView(MethodView):
+
+    requires_login = False
+
+    def needs_login(self, **kwargs):
+        if not current_user.is_authenticated():
+            next = kwargs.get('next', request.values.get('next', '/cart'))
+            return redirect(url_for_security('login', next=next))
+
     def get(self):
         # by default redirects to /cart on get
         return self.redirect()
@@ -39,8 +48,22 @@ class BaseView(MethodView):
 class CartView(BaseView):
 
     def get(self):
-        context = {"cart": Cart.get_cart()}
-        return self.render('cart/cart.html', **context)
+        if not session.get('cart_id'):
+            return self.render(
+                'cart/empty_cart.html',
+                url=current_app.config.get('CART_CONTINUE_URL', '/')
+            )
+
+        cart = Cart.get_cart()
+        context = {"cart": cart}
+
+        if cart.items:
+            template = 'cart/cart.html'
+        else:
+            template = 'cart/empty_cart.html'
+            context['url'] = cart.continue_shopping_url
+
+        return self.render(template, **context)
 
 
 class SetItemView(BaseView):
@@ -68,18 +91,11 @@ class SetProcessorView(BaseView):
         return self.redirect(processor=cart.processor.identifier)
 
 
-# class SetStatusView(BaseView):
-#     def post(self):
-#         pass  # to be implemented
-
-
-# class ConfigureView(BaseView):
-#     pass
-
-
 class CheckoutView(BaseView):
     def post(self):
-        pass
+        cart = Cart.get_cart()
+        return (cart.requires_login and self.needs_login()) \
+            or cart.process_pipeline()
 
 
 class HistoryView(BaseView):
@@ -87,4 +103,6 @@ class HistoryView(BaseView):
         context = {
             "carts": Cart.objects(belongs_to=get_current_user())
         }
-        return self.render('cart/history.html', **context)
+        return self.needs_login(next=url_for('cart.history')) or self.render(
+            'cart/history.html', **context
+        )
