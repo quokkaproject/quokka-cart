@@ -167,12 +167,15 @@ class Processor(Publishable, db.DynamicDocument):
 
 class Cart(Publishable, db.DynamicDocument):
     STATUS = (
-        ("pending", _l("Pending")),
-        ("checked_out", _l("Checked out")),
-        ("confirmed", _l("Confirmed")),
-        ("cancelled", _l("Cancelled")),
-        ("abandoned", _l("Abandoned")),
-        ("completed", _l("Completed")),
+        ("pending", _l("Pending")),  # not checked out
+        ("checked_out", _l("Checked out")),  # not confirmed (payment)
+        ("analysing", _l("Analysing")),  # Analysing payment
+        ("confirmed", _l("Confirmed")),  # Payment confirmed
+        ("completed", _l("Completed")),  # Payment completed (money released)
+        ("refunding", _l("Refunding")),  # Buyer asks refund
+        ("refunded", _l("Refunded")),  # Money refunded to buyer
+        ("cancelled", _l("Cancelled")),  # Cancelled without processing
+        ("abandoned", _l("Abandoned")),  # Long time no update
     )
     reference = db.GenericReferenceField()
     """reference must implement set_status(**kwargs) method
