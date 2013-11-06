@@ -212,7 +212,6 @@ class Cart(Publishable, db.DynamicDocument):
     shipping_data = db.DictField(default=lambda: {})
     shippping_cost = db.FloatField(default=0)
     processor = db.ReferenceField(Processor,
-                                  required=True,
                                   default=Processor.get_default_processor)
     reference_code = db.StringField()  # Reference code for filtering
     checkout_code = db.StringField()  # The UID for transaction checkout
