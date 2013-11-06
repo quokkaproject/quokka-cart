@@ -15,7 +15,7 @@ class ProductAdmin(PostAdmin):
                    'available_at', 'view_on_site')
     column_searchable_list = ['title', 'summary', 'description']
     form_columns = [
-        'title', 'slug', 'channel', 'related_channels',  'summary',
+        'title', 'slug', 'channel', 'related_channels', 'summary',
         'description', 'unity_value', 'weight', 'dimensions', 'extra_value',
         'published', 'show_on_channel',
         'available_at', 'available_until',

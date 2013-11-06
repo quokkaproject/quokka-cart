@@ -43,7 +43,6 @@ class BaseProduct(BaseProductReference, Content):
     dimensions = db.StringField()
     extra_value = db.FloatField()
 
-
     meta = {
         'allow_inheritance': True
     }
