@@ -15,7 +15,9 @@ Features
 - Generic shopping cart management (manages itenms, prices, quantities)
 - Executes **pipelines** (functions to dinamycally configure the checkout)
 - Executes a decoupled **processor** for checkout
-- 
+- Expose urls for checkout, history and receive carrier notifications
+- Expose simple API to manage the cart (/additem, /setitem, /removeitem etc..)
+
 ### What Quokka-car does not:
 
 - A complete e-commerce solution (for that take a look at Quokka-commerce which uses quokka-cart)
