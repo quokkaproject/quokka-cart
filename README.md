@@ -1,9 +1,6 @@
-quokka-cart
-==================
+# Quokka Cart | Version 0.1.0dev
 
-# Quokka Cart | Version 0.1.0
-
-A Shopping cart for quokka CMS
+A Shopping cart for [Quokka CMS](http://www.quokkaproject.org)
 
 <p align="center">
 <img src="http://quokkaproject.org/images/cart_checkout.png" alt="quokka cart" />
@@ -13,12 +10,13 @@ A Shopping cart for quokka CMS
 Features
 =============
 
-### What Quokka-cart is:
+### What Quokka-cart does:
 
-- Generic shopping cart management (manages itens, prices, quantities)
+- Generic shopping cart management (manages itenms, prices, quantities)
+- Executes **pipelines** (functions to dinamycally configure the checkout)
 - Executes a decoupled **processor** for checkout
-
-### What Quokka-car is not:
+- 
+### What Quokka-car does not:
 
 - A complete e-commerce solution (for that take a look at Quokka-commerce which uses quokka-cart)
 
@@ -43,6 +41,9 @@ Product
 
 Cart
 ====
+
+Checkout Pipeline
+========
 
 Processor
 =========
