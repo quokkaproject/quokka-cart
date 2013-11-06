@@ -53,3 +53,7 @@ Processor
 
 - http://github.com/pythonhub/quokka-cart  
 -  by Bruno Rocha <rochacbruno@gmail.com>
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/pythonhub/quokka-cart/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
