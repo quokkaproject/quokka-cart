@@ -29,11 +29,23 @@ class BaseProductReference(object):
     def get_dimensions(self):
         return getattr(self, 'dimensions', None)
 
+    def get_summary(self):
+        summary = getattr(self, 'summary', None)
+        if not summary:
+            try:
+                return self.get_description()[:255]
+            except:
+                pass
+        return summary
+
     def get_extra_value(self):
         return getattr(self, 'extra_value', None)
 
     def get_uid(self):
         return str(self.id)
+
+    def set_status(self, *args, **kwargs):
+        pass
 
 
 class BaseProduct(BaseProductReference, Content):
