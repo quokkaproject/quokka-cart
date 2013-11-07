@@ -73,7 +73,7 @@ class PagSeguroProcessor(BaseProcessor):
         self.cart.addlog(
             (
                 "lib checkout data:{pg.data}"
-                " code:{r.code} url:r.payment_url"
+                " code:{r.code} url:{r.payment_url}"
                 "errors: {r.errors}"
             ).format(
                 pg=self.pg, r=response
