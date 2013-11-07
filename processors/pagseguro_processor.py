@@ -70,6 +70,15 @@ class PagSeguroProcessor(BaseProcessor):
         kwargs.update(self._record.config)
         kwargs.update(self.cart.config)
         response = self.pg.checkout(**kwargs)
+        self.cart.addlog(
+            (
+                "lib checkout data:{pg.data}"
+                " code:{r.code} url:r.payment_url"
+                "errors: {r.errors}"
+            ).format(
+                 pg=self.pg, r=response
+            )
+        )
         if not response.errors:
             self.cart.checkout_code = response.code
             #self.cart.status = 'checked_out'  # should set on redirect url
