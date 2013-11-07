@@ -76,7 +76,7 @@ class PagSeguroProcessor(BaseProcessor):
                 " code:{r.code} url:r.payment_url"
                 "errors: {r.errors}"
             ).format(
-                 pg=self.pg, r=response
+                pg=self.pg, r=response
             )
         )
         if not response.errors:
