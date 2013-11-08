@@ -72,9 +72,10 @@ class PagSeguroProcessor(BaseProcessor):
         response = self.pg.checkout(**kwargs)
         self.cart.addlog(
             (
-                "lib checkout data:{pg.data}"
-                " code:{r.code} url:{r.payment_url}"
-                "errors: {r.errors}"
+                "lib checkout data:{pg.data}\n"
+                " code:{r.code} url:{r.payment_url}\n"
+                " errors: {r.errors}\n"
+                " xml: {r.xml}\n"
             ).format(
                 pg=self.pg, r=response
             )
