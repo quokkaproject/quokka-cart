@@ -45,10 +45,10 @@ class PagSeguroProcessor(BaseProcessor):
         self.pg.items = [
             {
                 "id": item.get_uid(),
-                "description": u"{i.title} - {i.description}".format(i=item),
+                "description": item.title[:100],
                 "amount": "%.2f" % item.unity_plus_extra,
                 "weight": item.weight,
-                "quantity": int(item.quantity)
+                "quantity": int(item.quantity or 1)
             }
             for item in self.cart.items if item.total >= 0
         ]
