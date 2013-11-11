@@ -61,7 +61,7 @@ class BaseProduct(BaseProductReference, Content):
 
 
 class Item(Ordered, Dated, db.EmbeddedDocument):
-    product = db.ReferenceField(Content, reverse_delete_rule=db.NULLIFY)
+    product = db.ReferenceField(Content)
     reference = db.GenericReferenceField()  # customized product
     """
     Must implement all the BaseProduct methods/ its optional
