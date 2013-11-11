@@ -84,7 +84,9 @@ class Item(Ordered, Dated, db.EmbeddedDocument):
     def normalize(cls, kwargs):
         new = {}
         for k, v in kwargs.items():
-            field = cls._fields[k]
+            field = cls._fields.get(k)
+            if not field:
+                continue
             new[k] = field.to_python(v)
         return new
 
@@ -181,7 +183,9 @@ class Processor(Publishable, db.DynamicDocument):
             'CART_DEFAULT_PROCESSOR',
             default={
                 'module': 'quokka.modules.cart.processors.Dummy',
-                'identifier': 'dummy'
+                'identifier': 'dummy',
+                'published': True,
+                'title': "Test"
             }
         )
 
@@ -307,7 +311,7 @@ class Cart(Publishable, db.DynamicDocument):
         )
 
         if not uid:
-            logger.warning("Cannot add item without an uid %s" % kwargs)
+            self.addlog("Cannot add item without an uid %s" % kwargs)
             return
 
         item = self.get_item(uid)
@@ -317,19 +321,23 @@ class Cart(Publishable, db.DynamicDocument):
         if not item:
             # items should only be added if there is a product (for safety)
             if not kwargs.get('product'):
+                self.addlog("there is no product to add item")
                 return
             allowed = ['product', 'quantity']
             item = self.items.create(
                 **{k: v for k, v in kwargs.items() if k in allowed}
             )
+            self.addlog("New item created %s" % item, save=False)
         else:
             # update only allowed attributes
             item = self.items.update(
                 {k: v for k, v in kwargs.items() if k in item.allowed_to_set},
                 uid=item.uid
             )
+            self.addlog("Item updated %s" % item, save=False)
 
             if int(kwargs.get('quantity', "1")) == 0:
+                self.addlog("quantity is 0, removed %s" % kwargs, save=False)
                 self.remove_item(**kwargs)
 
         self.save()
@@ -345,6 +353,7 @@ class Cart(Publishable, db.DynamicDocument):
         if processor_instance.validate():
             return processor_instance.process()
         else:
+            self.addlog("Cart did not validate")
             raise Exception("Cart did not validate")  # todo: specialize this
 
     def get_items_pipeline(self):
