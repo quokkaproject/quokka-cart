@@ -61,7 +61,7 @@ class BaseProduct(BaseProductReference, Content):
 
 
 class Item(Ordered, Dated, db.EmbeddedDocument):
-    product = db.ReferenceField(Content)
+    product = db.ReferenceField(Content, reverse_delete_rule=db.NULLIFY)
     reference = db.GenericReferenceField()  # customized product
     """
     Must implement all the BaseProduct methods/ its optional
@@ -150,7 +150,7 @@ class Processor(Publishable, db.DynamicDocument):
     requires = db.ListField(db.StringField())
     description = db.StringField()
     title = db.StringField()
-    image = db.ReferenceField(Image)
+    image = db.ReferenceField(Image, reverse_delete_rule=db.NULLIFY)
     link = db.StringField()
     config = db.DictField(default=lambda: {})
     pipeline = db.ListField(db.StringField(), default=[])
@@ -218,7 +218,9 @@ class Cart(Publishable, db.DynamicDocument):
     Also reference must implement get_uid() which will return
     the unique identifier for this transaction"""
 
-    belongs_to = db.ReferenceField('User', default=get_current_user)
+    belongs_to = db.ReferenceField('User',
+                                   default=get_current_user,
+                                   reverse_delete_rule=db.NULLIFY)
     items = db.ListField(db.EmbeddedDocumentField(Item))
     payment = db.ListField(db.EmbeddedDocumentField(Payment))
     status = db.StringField(choices=STATUS, default='pending')
@@ -228,7 +230,8 @@ class Cart(Publishable, db.DynamicDocument):
     shipping_data = db.DictField(default=lambda: {})
     shippping_cost = db.FloatField(default=0)
     processor = db.ReferenceField(Processor,
-                                  default=Processor.get_default_processor)
+                                  default=Processor.get_default_processor,
+                                  reverse_delete_rule=db.NULLIFY)
     reference_code = db.StringField()  # Reference code for filtering
     checkout_code = db.StringField()  # The UID for transaction checkout
     transaction_code = db.StringField()  # The UID for transaction
