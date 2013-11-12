@@ -243,7 +243,9 @@ class Cart(Publishable, db.DynamicDocument):
     transaction_code = db.StringField()  # The UID for transaction
     requires_login = db.BooleanField(default=True)
     continue_shopping_url = db.StringField(
-        default=lazy_str_setting('CART_CONTINUE_SHOPPING_URL',  default="/")
+        default=lambda: current_app.config.get(
+            'CART_CONTINUE_SHOPPING_URL', '/'
+        )
     )
     pipeline = db.ListField(db.StringField(), default=[])
     log = db.ListField(db.StringField(), default=[])
@@ -290,6 +292,12 @@ class Cart(Publishable, db.DynamicDocument):
             cart = cls(status="pending")
             cart.save()
             session['cart_id'] = str(cart.id)
+            try:
+                session.pop('cart_pipeline_index')
+                session.pop('cart_pipeline_args')
+            except KeyError:
+                pass
+
         return cart
 
     def assign(self):

@@ -9,6 +9,7 @@ class PipelineOverflow(Exception):
 
 
 class CartPipeline(object):
+
     def __init__(self, cart, pipeline, index=0):
         self.cart = cart  # Cart object
         self.pipeline = pipeline   # pipeline ordered list []
@@ -25,6 +26,9 @@ class CartPipeline(object):
             del session['cart_pipeline_index']
         if session.get('cart_pipeline_args'):
             del session['cart_pipeline_args']
+
+    def render(self, *args, **kwargs):
+        return render_template(*args, **kwargs)
 
     def _preprocess(self):
         try:
