@@ -138,7 +138,7 @@ class PagSeguroProcessor(BaseProcessor):
         if transaction_code:
             context['transaction_code'] = transaction_code
             response = self.pg.check_transaction(transaction_code)
-            logger.info(u"Response %s" % response.xml)
+            logger.debug(response.xml)
             reference = getattr(response, 'reference', None)
             if not reference:
                 logger.error("no reference found")
