@@ -242,7 +242,9 @@ class Cart(Publishable, db.DynamicDocument):
     checkout_code = db.StringField()  # The UID for transaction checkout
     transaction_code = db.StringField()  # The UID for transaction
     requires_login = db.BooleanField(default=True)
-    continue_shopping_url = db.StringField(default="/")
+    continue_shopping_url = db.StringField(
+        default=lazy_str_setting('CART_CONTINUE_SHOPPING_URL',  default="/")
+    )
     pipeline = db.ListField(db.StringField(), default=[])
     log = db.ListField(db.StringField(), default=[])
     config = db.DictField(default=lambda: {})
