@@ -80,6 +80,12 @@ class Item(Ordered, Dated, db.EmbeddedDocument):
     allowed_to_set = db.ListField(db.StringField(), default=['quantity'])
     pipeline = db.ListField(db.StringField(), default=[])
 
+    def get_main_image_url(self, thumb=False, default=None):
+        try:
+            return self.product.get_main_image_url(thumb, default)
+        except:
+            return None
+
     @classmethod
     def normalize(cls, kwargs):
         new = {}
