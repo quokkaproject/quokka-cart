@@ -141,7 +141,7 @@ class PagSeguroProcessor(BaseProcessor):
             logger.info(u"Response %s" % response.xml)
             reference = getattr(response, 'reference', None)
             if not reference:
-                logger.erro("no reference found")
+                logger.error("no reference found")
                 return render_template('cart/simple_confirmation.html',
                                        **context)
             PREFIX = self.pg.config.get('REFERENCE_PREFIX', '') or ''
@@ -157,8 +157,7 @@ class PagSeguroProcessor(BaseProcessor):
                 self.cart.status = self.STATUS_MAP.get(
                     str(status), self.cart.status
                 )
-                if not self.cart.transaction_code:
-                    self.cart.transaction_code = transaction_code
+                self.cart.transaction_code = transaction_code
                 msg = "Status changed to: %s" % self.cart.status
                 self.cart.addlog(msg)
                 context['cart'] = self.cart
