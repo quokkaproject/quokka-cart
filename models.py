@@ -146,14 +146,14 @@ class Payment(db.EmbeddedDocument):
 
 class Processor(Publishable, db.DynamicDocument):
     identifier = db.StringField(max_length=100, unique=True)
-    module = db.StringField()
-    requires = db.ListField(db.StringField())
+    module = db.StringField(max_length=255)
+    requires = db.ListField(db.StringField(max_length=255))
     description = db.StringField()
     title = db.StringField()
     image = db.ReferenceField(Image, reverse_delete_rule=db.NULLIFY)
-    link = db.StringField()
+    link = db.StringField(max_length=255)
     config = db.DictField(default=lambda: {})
-    pipeline = db.ListField(db.StringField(), default=[])
+    pipeline = db.ListField(db.StringField(max_length=255), default=[])
 
     def import_processor(self):
         return import_string(self.module)
@@ -228,7 +228,7 @@ class Cart(Publishable, db.DynamicDocument):
     extra_costs = db.DictField(default=lambda: {})
     sender_data = db.DictField(default=lambda: {})
     shipping_data = db.DictField(default=lambda: {})
-    shippping_cost = db.FloatField(default=0)
+    shipping_cost = db.FloatField(default=0)
     processor = db.ReferenceField(Processor,
                                   default=Processor.get_default_processor,
                                   reverse_delete_rule=db.NULLIFY)
