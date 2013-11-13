@@ -80,6 +80,12 @@ class Item(Ordered, Dated, db.EmbeddedDocument):
     allowed_to_set = db.ListField(db.StringField(), default=['quantity'])
     pipeline = db.ListField(db.StringField(), default=[])
 
+    def set_status(self, status):
+        if self.reference and hasattr(self.reference, 'set_status'):
+            self.reference.set_status(status)
+        if self.product and hasattr(self.product, 'set_status'):
+            self.product.set_status(status)
+
     def get_main_image_url(self, thumb=False, default=None):
         try:
             return self.product.get_main_image_url(thumb, default)
@@ -250,6 +256,25 @@ class Cart(Publishable, db.DynamicDocument):
     pipeline = db.ListField(db.StringField(), default=[])
     log = db.ListField(db.StringField(), default=[])
     config = db.DictField(default=lambda: {})
+
+    def set_status(self, status, save=False):
+        """
+        THis method will be called by the processor
+        which will pass a valid status as in STATUS
+        so, this method will dispatch the STATUS to
+        all the items and also the 'reference' if set
+        """
+        if self.status != status:
+            self.status = status
+
+        if self.reference and hasattr(self.reference, 'set_status'):
+            self.reference.set_status(status)
+
+        for item in self.items:
+            item.set_status(status)
+
+        if save:
+            self.save()
 
     def addlog(self, msg, save=True):
         self.log.append(u"{0},{1}".format(datetime.datetime.now(), msg))

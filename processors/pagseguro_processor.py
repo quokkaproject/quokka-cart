@@ -115,9 +115,11 @@ class PagSeguroProcessor(BaseProcessor):
             self.cart = Cart.objects.get(
                 reference_code=reference.replace(PREFIX, '')
             )
-            self.cart.status = self.STATUS_MAP.get(
-                str(status), self.cart.status
+
+            self.cart.set_status(
+                self.STATUS_MAP.get(str(status), self.cart.status)
             )
+
             if transaction_code:
                 self.cart.transaction_code = transaction_code
             msg = "Status changed to: %s" % self.cart.status
@@ -154,9 +156,11 @@ class PagSeguroProcessor(BaseProcessor):
                 self.cart = Cart.objects.get(
                     reference_code=reference.replace(PREFIX, '')
                 )
-                self.cart.status = self.STATUS_MAP.get(
-                    str(status), self.cart.status
+
+                self.cart.set_status(
+                    self.STATUS_MAP.get(str(status), self.cart.status)
                 )
+
                 self.cart.transaction_code = transaction_code
                 msg = "Status changed to: %s" % self.cart.status
                 self.cart.addlog(msg)
