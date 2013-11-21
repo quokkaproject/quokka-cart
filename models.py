@@ -47,6 +47,9 @@ class BaseProductReference(object):
     def set_status(self, *args, **kwargs):
         pass
 
+    def remove_item(self, *args, **kwargs):
+        pass
+
 
 class BaseProduct(BaseProductReference, Content):
     description = db.StringField(required=True)
@@ -389,7 +392,12 @@ class Cart(Publishable, db.DynamicDocument):
         return item
 
     def remove_item(self, **kwargs):
-        return self.items.delete(**kwargs)
+        deleted = self.items.delete(**kwargs)
+        print self.reference
+        if self.reference and hasattr(self.reference, 'remove_item'):
+            self.reference.remove_item(**kwargs)
+            print self.reference
+        return deleted
 
     def checkout(self, processor=None, *args, **kwargs):
         self.set_processor(processor)
