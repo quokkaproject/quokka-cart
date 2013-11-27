@@ -7,6 +7,14 @@ module = QuokkaModule("cart", __name__,
 from .views import CartView, SetItemView, RemoveItemView, SetProcessorView, \
     CheckoutView, HistoryView, ConfirmationView, NotificationView
 
+from .functions import get_current_cart
+
+
+# template globals
+module.add_app_template_global(get_current_cart)
+
+
+# urls
 module.add_url_rule('/cart/', view_func=CartView.as_view('cart'))
 module.add_url_rule('/cart/setitem/', view_func=SetItemView.as_view('setitem'))
 module.add_url_rule('/cart/removeitem/',
