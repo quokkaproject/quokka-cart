@@ -270,14 +270,17 @@ class Cart(Publishable, db.DynamicDocument):
         if self.status != status:
             self.status = status
 
+        self.set_reference_statuses(status)
+
+        if save:
+            self.save()
+
+    def set_reference_statuses(self, status):
         if self.reference and hasattr(self.reference, 'set_status'):
             self.reference.set_status(status)
 
         for item in self.items:
             item.set_status(status)
-
-        if save:
-            self.save()
 
     def addlog(self, msg, save=True):
         self.log.append(u"{0},{1}".format(datetime.datetime.now(), msg))
@@ -338,6 +341,8 @@ class Cart(Publishable, db.DynamicDocument):
         if not self.reference_code:
             self.reference_code = self.get_uid()
             self.save()
+
+        self.set_reference_statuses(self.status)
 
     def get_item(self, uid):
         # MongoEngine/mongoengine#503
