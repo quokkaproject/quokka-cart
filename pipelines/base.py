@@ -2,6 +2,7 @@
 from flask import session, request
 from werkzeug.utils import import_string
 from quokka.core.templates import render_template
+from quokka.utils import get_current_user
 
 
 class PipelineOverflow(Exception):
@@ -79,8 +80,24 @@ class CartProcessorPipeline(CartPipeline):
 
 
 class StartPipeline(CartPipeline):
+    """
+    This is the first pipeline executed upon cart checkout
+    it only checks if user has email and name
+    """
     def process(self):
         self.cart.addlog("StartPipeline")
+        user = get_current_user()
+        if not all([user.name, user.email]):
+            confirm = request.form.get('cart_complete_information')
+            if not confirm:
+                return self.render('cart/complete_information.html')
+            name = request.form.get("name") or user.name
+            email = request.form.get("email") or user.email
+
+            user.name = name
+            user.email = email
+            user.save()
+
         return self.go()
 
 
@@ -89,7 +106,5 @@ class TestPipeline(CartPipeline):
         self.cart.addlog("TestPipeline")
         if not session.get('completed') == 3:
             session['completed'] = 3
-            # TODO: REnder a form here
-            # should use self.args to deal with forms
             return render_template('cart/test.html', cart=self.cart)
         return self.go()
