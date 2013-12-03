@@ -244,6 +244,7 @@ class Cart(Publishable, db.DynamicDocument):
     sender_data = db.DictField(default=lambda: {})
     shipping_data = db.DictField(default=lambda: {})
     shipping_cost = db.FloatField(default=0)
+    tax = db.FloatField(default=0)
     processor = db.ReferenceField(Processor,
                                   default=Processor.get_default_processor,
                                   reverse_delete_rule=db.NULLIFY)
@@ -259,6 +260,25 @@ class Cart(Publishable, db.DynamicDocument):
     pipeline = db.ListField(db.StringField(), default=[])
     log = db.ListField(db.StringField(), default=[])
     config = db.DictField(default=lambda: {})
+
+    def send_response(self, response, identifier):
+        if self.reference and hasattr(self.reference, 'get_response'):
+            self.reference.get_response(response, identifier)
+
+        for item in self.items:
+            if hasattr(item, 'get_response'):
+                item.get_response(response, identifier)
+
+    def set_tax(self, tax, save=False):
+        """
+        set tax and send to references
+        """
+        try:
+            tax = float(tax)
+            self.tax = tax
+            self.set_reference_tax(tax)
+        except Exception as e:
+            self.addlog("impossible to set tax: %s" % str(e))
 
     def set_status(self, status, save=False):
         """
@@ -281,6 +301,14 @@ class Cart(Publishable, db.DynamicDocument):
 
         for item in self.items:
             item.set_status(status)
+
+    def set_reference_tax(self, tax):
+        if self.reference and hasattr(self.reference, 'set_tax'):
+            self.reference.set_tax(tax)
+
+        for item in self.items:
+            if hasattr(item, 'set_tax'):
+                item.set_tax(tax)
 
     def addlog(self, msg, save=True):
         self.log.append(u"{0},{1}".format(datetime.datetime.now(), msg))

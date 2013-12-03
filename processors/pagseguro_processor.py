@@ -122,8 +122,19 @@ class PagSeguroProcessor(BaseProcessor):
 
             if transaction_code:
                 self.cart.transaction_code = transaction_code
+
             msg = "Status changed to: %s" % self.cart.status
             self.cart.addlog(msg)
+
+            fee_amount = getattr(response, 'feeAmount', None)
+            if fee_amount:
+                self.cart.set_tax(fee_amount)
+                msg = "Tax set to: %s" % fee_amount
+                self.cart.addlog(msg)
+
+            # send response to reference and products
+            self.cart.send_response(response, 'pagseguro')
+
             return msg
         except Exception as e:
             msg = "Cart not found: {} - {}".format(reference, e)
