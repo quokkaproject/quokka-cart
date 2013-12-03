@@ -89,10 +89,16 @@ class StartPipeline(CartPipeline):
         user = get_current_user()
         if not all([user.name, user.email]):
             confirm = request.form.get('cart_complete_information')
-            if not confirm:
-                return self.render('cart/complete_information.html')
-            name = request.form.get("name") or user.name
+
+            name = request.form.get("name") or user.name or ""
             email = request.form.get("email") or user.email
+
+            valid_name = len(name.split()) > 1
+
+            if not confirm or not valid_name:
+                return self.render('cart/complete_information.html',
+                                   valid_name=valid_name,
+                                   name=name)
 
             user.name = name
             user.email = email
