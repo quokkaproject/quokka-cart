@@ -234,7 +234,7 @@ class Cart(Publishable, db.DynamicDocument):
     the unique identifier for this transaction"""
 
     belongs_to = db.ReferenceField('User',
-                                   default=get_current_user,
+                                   # default=get_current_user,
                                    reverse_delete_rule=db.NULLIFY)
     items = db.ListField(db.EmbeddedDocumentField(Item))
     payment = db.ListField(db.EmbeddedDocumentField(Payment))
@@ -322,7 +322,8 @@ class Cart(Publishable, db.DynamicDocument):
     def get_uid(self):
         try:
             return self.reference.get_uid() or str(self.id)
-        except:
+        except Exception as e:
+            self.addlog("Using self.id as reference", save=False)
             return str(self.id)
 
     def __unicode__(self):
@@ -365,11 +366,8 @@ class Cart(Publishable, db.DynamicDocument):
     def save(self, *args, **kwargs):
         self.total = sum([item.total for item in self.items])
         self.assign()
+        self.reference_code = self.get_uid()
         super(Cart, self).save(*args, **kwargs)
-        if not self.reference_code:
-            self.reference_code = self.get_uid()
-            self.save()
-
         self.set_reference_statuses(self.status)
 
     def get_item(self, uid):
@@ -436,7 +434,10 @@ class Cart(Publishable, db.DynamicDocument):
         self.set_processor(processor)
         processor_instance = self.processor.get_instance(self, *args, **kwargs)
         if processor_instance.validate():
-            return processor_instance.process()
+            response = processor_instance.process()
+            self.status = 'checked_out'
+            self.save()
+            return response
         else:
             self.addlog("Cart did not validate")
             raise Exception("Cart did not validate")  # todo: specialize this

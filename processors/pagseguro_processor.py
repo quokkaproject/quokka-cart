@@ -82,7 +82,6 @@ class PagSeguroProcessor(BaseProcessor):
         )
         if not response.errors:
             self.cart.checkout_code = response.code
-            #self.cart.status = 'checked_out'  # should set on redirect url
             self.cart.addlog("PagSeguro processed! {}".format(response.code))
             return redirect(response.payment_url)
         else:
@@ -112,9 +111,15 @@ class PagSeguroProcessor(BaseProcessor):
 
         # TODO: get grossAmount to populate a payment with methods
         try:
-            self.cart = Cart.objects.get(
-                reference_code=reference.replace(PREFIX, '')
-            )
+            ref = reference.replace(PREFIX, '')
+            qs = Cart.objects.filter(
+                reference_code=ref
+            ) or Cart.objects.filter(id=ref)
+
+            if not qs:
+                return "Cart not found"
+
+            self.cart = qs[0]
 
             self.cart.set_status(
                 self.STATUS_MAP.get(str(status), self.cart.status)
@@ -137,7 +142,7 @@ class PagSeguroProcessor(BaseProcessor):
 
             return msg
         except Exception as e:
-            msg = "Cart not found: {} - {}".format(reference, e)
+            msg = "Error in notification: {} - {}".format(reference, e)
             logger.error(msg)
             return msg
 
@@ -164,9 +169,18 @@ class PagSeguroProcessor(BaseProcessor):
 
             # TODO: get grossAmount to populate a payment with methods
             try:
-                self.cart = Cart.objects.get(
-                    reference_code=reference.replace(PREFIX, '')
-                )
+                # self.cart = Cart.objects.get(
+                #     reference_code=reference.replace(PREFIX, '')
+                # )
+                ref = reference.replace(PREFIX, '')
+                qs = Cart.objects.filter(
+                    reference_code=ref
+                ) or Cart.objects.filter(id=ref)
+
+                if not qs:
+                    return "Cart not found"
+
+                self.cart = qs[0]
 
                 self.cart.set_status(
                     self.STATUS_MAP.get(str(status), self.cart.status)
@@ -177,8 +191,18 @@ class PagSeguroProcessor(BaseProcessor):
                 self.cart.addlog(msg)
                 context['cart'] = self.cart
                 logger.info("Cart updated")
+
+                fee_amount = getattr(response, 'feeAmount', None)
+                if fee_amount:
+                    self.cart.set_tax(fee_amount)
+                    msg = "Tax set to: %s" % fee_amount
+                    self.cart.addlog(msg)
+
+                # send response to reference and products
+                self.cart.send_response(response, 'pagseguro')
+
                 return render_template('cart/confirmation.html', **context)
             except Exception as e:
-                msg = "Cart not found: {} - {}".format(reference, e)
+                msg = "Error in confirmation: {} - {}".format(reference, e)
                 logger.error(msg)
         return render_template('cart/simple_confirmation.html', **context)
