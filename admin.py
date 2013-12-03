@@ -46,7 +46,7 @@ class CartAdmin(ModelAdmin):
                    "reference_code", "checkout_code", 'items')
     form_columns = ('created_at', 'belongs_to', 'processor', 'status',
                     'total', 'extra_costs', 'reference_code', 'checkout_code',
-                    'sender_data', 'shipping_data', 'shipping_cost',
+                    'sender_data', 'shipping_data', 'tax', 'shipping_cost',
                     'transaction_code', 'requires_login',
                     'continue_shopping_url', 'pipeline', 'log', 'config',
                     'items',
