@@ -326,7 +326,7 @@ class Cart(Publishable, db.DynamicDocument):
     def get_uid(self):
         try:
             return self.reference.get_uid() or str(self.id)
-        except Exception as e:
+        except Exception:
             self.addlog("Using self.id as reference", save=False)
             return str(self.id)
 
@@ -356,11 +356,8 @@ class Cart(Publishable, db.DynamicDocument):
             cart = cls(status="pending")
             cart.save()
             session['cart_id'] = str(cart.id)
-            try:
-                session.pop('cart_pipeline_index')
-                session.pop('cart_pipeline_args')
-            except KeyError:
-                pass
+            session.pop('cart_pipeline_index', None)
+            session.pop('cart_pipeline_args', None)
 
         return cart
 
@@ -441,6 +438,7 @@ class Cart(Publishable, db.DynamicDocument):
             response = processor_instance.process()
             self.status = 'checked_out'
             self.save()
+            session.pop('cart_id', None)
             return response
         else:
             self.addlog("Cart did not validate")
