@@ -311,9 +311,13 @@ class Cart(Publishable, db.DynamicDocument):
                 item.set_tax(tax)
 
     def addlog(self, msg, save=True):
-        self.log.append(u"{0},{1}".format(datetime.datetime.now(), msg))
-        logger.debug(msg)
-        save and self.save()
+        try:
+            self.log.append(u"{0},{1}".format(datetime.datetime.now(), msg))
+            logger.debug(msg)
+            save and self.save()
+        except UnicodeDecodeError as e:
+            logger.info(msg)
+            logger.error(str(e))
 
     @property
     def uid(self):
