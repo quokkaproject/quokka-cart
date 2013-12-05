@@ -338,7 +338,7 @@ class Cart(Publishable, db.DynamicDocument):
             return sum(self.extra_costs.values())
 
     @classmethod
-    def get_cart(cls):
+    def get_cart(cls, no_dereference=False, save=True):
         """
         get or create a new cart related to the session
         if there is a current logged in user it will be set
@@ -347,11 +347,18 @@ class Cart(Publishable, db.DynamicDocument):
         session.permanent = current_app.config.get(
             "CART_PERMANENT_SESSION", True)
         try:
-            cart = cls.objects.get(
-                id=session.get('cart_id'),
-                status='pending'
-            )
-            cart.save()
+            cart = cls.objects(id=session.get('cart_id'), status='pending')
+
+            if not cart:
+                raise cls.DoesNotExist('A pending cart not found')
+
+            if no_dereference:
+                cart = cart.no_dereference()
+
+            cart = cart.first()
+
+            save and cart.save()
+
         except (cls.DoesNotExist, db.ValidationError):
             cart = cls(status="pending")
             cart.save()
