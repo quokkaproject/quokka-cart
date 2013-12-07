@@ -379,6 +379,8 @@ class Cart(Publishable, db.DynamicDocument):
         self.assign()
         self.reference_code = self.get_uid()
         self.search_helper = self.get_search_helper()
+        if not self.id:
+            self.published = True
         super(Cart, self).save(*args, **kwargs)
         self.set_reference_statuses(self.status)
 
