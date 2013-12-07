@@ -107,7 +107,7 @@ class Item(Ordered, Dated, db.EmbeddedDocument):
         return new
 
     def __unicode__(self):
-        return u"{i.uid} {i.title}".format(i=self)
+        return u"{i.title} - {i.total_value}".format(i=self)
 
     def get_uid(self):
         try:
