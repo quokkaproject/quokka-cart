@@ -43,7 +43,7 @@ class CartAdmin(ModelAdmin):
     column_searchable_list = ('transaction_code', 'checkout_code',
                               'reference_code', 'search_helper')
     column_list = ("belongs_to", 'total', 'status', 'created_at', 'processor',
-                   "reference_code", 'items')
+                   "reference_code", 'items', 'published')
     form_columns = ('created_at', 'belongs_to', 'processor', 'status',
                     'total', 'extra_costs', 'reference_code', 'checkout_code',
                     'sender_data', 'shipping_data', 'tax', 'shipping_cost',
@@ -91,6 +91,12 @@ class CartAdmin(ModelAdmin):
             }
         }
     }
+
+    def after_model_change(self, form, model, is_created):
+        if not is_created and model.reference:
+            print model.published
+            model.reference.published = model.published
+            model.reference.save()
 
 
 class ProcessorAdmin(ModelAdmin):

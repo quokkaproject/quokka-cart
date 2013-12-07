@@ -264,6 +264,10 @@ class Cart(Publishable, db.DynamicDocument):
 
     search_helper = db.StringField()
 
+    meta = {
+        'ordering': ['-created_at']
+    }
+
     def send_response(self, response, identifier):
         if self.reference and hasattr(self.reference, 'get_response'):
             self.reference.get_response(response, identifier)
@@ -389,8 +393,8 @@ class Cart(Publishable, db.DynamicDocument):
             return ""
         user = self.belongs_to
         return " ".join([
-            user.name,
-            user.email
+            user.name or "",
+            user.email or ""
         ])
 
     def get_item(self, uid):
