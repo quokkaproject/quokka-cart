@@ -75,7 +75,7 @@ class CartAdmin(ModelAdmin):
     column_formatters_args = {
         'ul': {
             'items': {
-                'placeholder': "{item.title} - {item.total_value}",
+                'placeholder': u"{item.title} - {item.total_value}",
                 'style': "min-width:200px;max-width:300px;"
             }
         },
