@@ -300,10 +300,10 @@ class Cart(Publishable, db.DynamicDocument):
 
     def set_reference_statuses(self, status):
         if self.reference and hasattr(self.reference, 'set_status'):
-            self.reference.set_status(status)
+            self.reference.set_status(status, cart=self)
 
         for item in self.items:
-            item.set_status(status)
+            item.set_status(status, cart=self)
 
     def set_reference_tax(self, tax):
         if self.reference and hasattr(self.reference, 'set_tax'):
