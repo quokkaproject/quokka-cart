@@ -378,8 +378,18 @@ class Cart(Publishable, db.DynamicDocument):
         self.total = sum([item.total for item in self.items])
         self.assign()
         self.reference_code = self.get_uid()
+        self.search_helper = self.get_search_helper()
         super(Cart, self).save(*args, **kwargs)
         self.set_reference_statuses(self.status)
+
+    def get_search_helper(self):
+        if not self.belongs_to:
+            return ""
+        user = self.belongs_to
+        return " ".join([
+            user.name,
+            user.email
+        ])
 
     def get_item(self, uid):
         # MongoEngine/mongoengine#503
