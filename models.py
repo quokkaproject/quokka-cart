@@ -83,11 +83,12 @@ class Item(Ordered, Dated, db.EmbeddedDocument):
     allowed_to_set = db.ListField(db.StringField(), default=['quantity'])
     pipeline = db.ListField(db.StringField(), default=[])
 
-    def set_status(self, status):
+    def set_status(self, status, *args, **kwargs):
+        kwargs['item'] = self
         if self.reference and hasattr(self.reference, 'set_status'):
-            self.reference.set_status(status)
+            self.reference.set_status(status, *args, **kwargs)
         if self.product and hasattr(self.product, 'set_status'):
-            self.product.set_status(status)
+            self.product.set_status(status, *args, **kwargs)
 
     def get_main_image_url(self, thumb=False, default=None):
         try:
