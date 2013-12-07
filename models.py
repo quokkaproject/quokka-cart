@@ -262,6 +262,8 @@ class Cart(Publishable, db.DynamicDocument):
     log = db.ListField(db.StringField(), default=[])
     config = db.DictField(default=lambda: {})
 
+    search_helper = db.StringField()
+
     def send_response(self, response, identifier):
         if self.reference and hasattr(self.reference, 'get_response'):
             self.reference.get_response(response, identifier)
