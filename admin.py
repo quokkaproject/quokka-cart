@@ -1,5 +1,5 @@
 # coding : utf -8
-#from flask.ext.htmlbuilder import html
+# from flask.ext.htmlbuilder import html
 #from flask.ext.admin.babel import lazy_gettext
 from quokka import admin
 from quokka.modules.posts.admin import PostAdmin
@@ -41,16 +41,56 @@ class CartAdmin(ModelAdmin):
     roles_accepted = ('admin', 'editor')
     column_filters = ('status', 'created_at')
     column_searchable_list = ('transaction_code', 'checkout_code',
-                              'reference_code')
+                              'reference_code', 'search_helper')
     column_list = ("belongs_to", 'total', 'status', 'created_at', 'processor',
-                   "reference_code", "checkout_code", 'items')
+                   "reference_code", 'items')
     form_columns = ('created_at', 'belongs_to', 'processor', 'status',
                     'total', 'extra_costs', 'reference_code', 'checkout_code',
                     'sender_data', 'shipping_data', 'tax', 'shipping_cost',
                     'transaction_code', 'requires_login',
-                    'continue_shopping_url', 'pipeline', 'log', 'config',
+                    'continue_shopping_url', 'pipeline', 'config',
                     'items',
                     'payment', 'published')
+
+    form_subdocuments = {
+        'items': {
+            'form_subdocuments': {
+                None: {
+                    'form_columns': ['uid', 'title', 'description',
+                                     'link', 'quantity', 'unity_value',
+                                     'total_value', 'weight', 'dimensions',
+                                     'extra_value']
+                }
+            }
+        }
+    }
+
+    column_formatters = {
+        'created_at': ModelAdmin.formatters.get('datetime'),
+        'available_at': ModelAdmin.formatters.get('datetime'),
+        'items': ModelAdmin.formatters.get('ul'),
+        'status': ModelAdmin.formatters.get('status'),
+    }
+
+    column_formatters_args = {
+        'ul': {
+            'items': {
+                'placeholder': "{item.title} - {item.total_value}",
+                'style': "min-width:200px;max-width:300px;"
+            }
+        },
+        'status': {
+            'status': {
+                'labels': {
+                    'confirmed': 'success',
+                    'checked_out': 'warning',
+                    'cancelled': 'danger',
+                    'completed': 'success'
+                },
+                'style': 'min-height:18px;'
+            }
+        }
+    }
 
 
 class ProcessorAdmin(ModelAdmin):
