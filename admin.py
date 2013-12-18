@@ -39,17 +39,19 @@ class ProductAdmin(PostAdmin):
 
 class CartAdmin(ModelAdmin):
     roles_accepted = ('admin', 'editor')
-    column_filters = ('status', 'created_at')
+    column_filters = ('status', 'created_at', 'total', 'tax',
+                      'reference_code', 'transaction_code')
     column_searchable_list = ('transaction_code', 'checkout_code',
                               'reference_code', 'search_helper')
-    column_list = ("belongs_to", 'total', 'status', 'created_at', 'processor',
+    column_list = ("belongs_to", 'total', 'tax', 'status', 'created_at', 'processor',
                    "reference_code", 'items', 'published')
     form_columns = ('created_at', 'belongs_to', 'processor', 'status',
                     'total', 'extra_costs', 'reference_code', 'checkout_code',
                     'sender_data', 'shipping_data', 'tax', 'shipping_cost',
-                    'transaction_code', 'requires_login',
-                    'continue_shopping_url', 'pipeline', 'config',
-                    'items',
+                    'transaction_code',
+                    #'requires_login',
+                    #'continue_shopping_url', 'pipeline', 'config',
+                    #'items',
                     'payment', 'published')
 
     form_subdocuments = {
@@ -94,8 +96,9 @@ class CartAdmin(ModelAdmin):
 
     def after_model_change(self, form, model, is_created):
         if not is_created and model.reference:
-            print model.published
             model.reference.published = model.published
+            if model.tax:
+                model.set_reference_tax(float(model.tax))
             model.reference.save()
 
 
