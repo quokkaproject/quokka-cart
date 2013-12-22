@@ -43,7 +43,8 @@ class CartAdmin(ModelAdmin):
                       'reference_code', 'transaction_code')
     column_searchable_list = ('transaction_code', 'checkout_code',
                               'reference_code', 'search_helper')
-    column_list = ("belongs_to", 'total', 'tax', 'status', 'created_at', 'processor',
+    column_list = ("belongs_to", 'total', 'tax', 'status', 'created_at',
+                   'processor',
                    "reference_code", 'items', 'published')
     form_columns = ('created_at', 'belongs_to', 'processor', 'status',
                     'total', 'extra_costs', 'reference_code', 'checkout_code',
@@ -72,6 +73,7 @@ class CartAdmin(ModelAdmin):
         'available_at': ModelAdmin.formatters.get('datetime'),
         'items': ModelAdmin.formatters.get('ul'),
         'status': ModelAdmin.formatters.get('status'),
+        'reference_code': ModelAdmin.formatters.get('get_url')
     }
 
     column_formatters_args = {
@@ -90,6 +92,12 @@ class CartAdmin(ModelAdmin):
                     'completed': 'success'
                 },
                 'style': 'min-height:18px;'
+            }
+        },
+        'get_url': {
+            'reference_code': {
+                'attribute': 'reference',
+                'method': 'get_admin_url'
             }
         }
     }
