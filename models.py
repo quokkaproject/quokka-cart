@@ -175,7 +175,7 @@ class Processor(Publishable, db.DynamicDocument):
         return import_string(self.module)
 
     def get_instance(self, *args, **kwargs):
-        if not 'config' in kwargs:
+        if 'config' not in kwargs:
             kwargs['config'] = self.config
         kwargs['_record'] = self
         return self.import_processor()(*args, **kwargs)

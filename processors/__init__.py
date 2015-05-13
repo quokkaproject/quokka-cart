@@ -1,4 +1,4 @@
-#coding: utf-8
+# coding: utf-8
 import logging
 from .base import BaseProcessor
 from quokka.core.templates import render_template

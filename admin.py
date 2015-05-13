@@ -1,6 +1,6 @@
 # coding : utf -8
 # from flask.ext.htmlbuilder import html
-#from flask.ext.admin.babel import lazy_gettext
+# from flask.ext.admin.babel import lazy_gettext
 from quokka import admin
 from quokka.modules.posts.admin import PostAdmin
 from quokka.core.admin.models import ModelAdmin
@@ -50,9 +50,9 @@ class CartAdmin(ModelAdmin):
                     'total', 'extra_costs', 'reference_code', 'checkout_code',
                     'sender_data', 'shipping_data', 'tax', 'shipping_cost',
                     'transaction_code',
-                    #'requires_login',
-                    #'continue_shopping_url', 'pipeline', 'config',
-                    #'items',
+                    # 'requires_login',
+                    # 'continue_shopping_url', 'pipeline', 'config',
+                    # 'items',
                     'payment', 'published')
 
     form_subdocuments = {
