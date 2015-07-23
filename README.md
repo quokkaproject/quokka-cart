@@ -18,7 +18,7 @@ Features
 - Expose urls for checkout, history and receive carrier notifications
 - Expose simple API to manage the cart (/additem, /setitem, /removeitem etc..)
 
-### What Quokka-car does not:
+### What Quokka-cart does not:
 
 - A complete e-commerce solution (for that take a look at Quokka-commerce which uses quokka-cart)
 
