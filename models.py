@@ -3,7 +3,7 @@ import datetime
 import logging
 from werkzeug.utils import import_string
 from flask import session, current_app
-from flask.ext.babel import lazy_gettext as _l
+from quokka.utils.translation import _l
 from quokka.utils import get_current_user, lazy_str_setting
 from quokka.core.templates import render_template
 from quokka.core.db import db
