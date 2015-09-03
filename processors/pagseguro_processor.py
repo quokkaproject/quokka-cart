@@ -103,15 +103,15 @@ class PagSeguroProcessor(BaseProcessor):
         if not reference:
             return "reference not found"
 
-        PREFIX = self.pg.config.get('REFERENCE_PREFIX', '') or ''
-        PREFIX = PREFIX.replace('%s', '')
+        prefix = self.pg.config.get('REFERENCE_PREFIX', '') or ''
+        prefix = prefix.replace('%s', '')
 
         status = getattr(response, 'status', None)
         transaction_code = getattr(response, 'code', None)
 
-        # TODO: get grossAmount to populate a payment with methods
+        # get grossAmount to populate a payment with methods
         try:
-            ref = reference.replace(PREFIX, '')
+            ref = reference.replace(prefix, '')
             qs = Cart.objects.filter(
                 reference_code=ref
             ) or Cart.objects.filter(id=ref)
@@ -162,17 +162,17 @@ class PagSeguroProcessor(BaseProcessor):
                 logger.error("no reference found")
                 return render_template('cart/simple_confirmation.html',
                                        **context)
-            PREFIX = self.pg.config.get('REFERENCE_PREFIX', '') or ''
-            PREFIX = PREFIX.replace('%s', '')
+            prefix = self.pg.config.get('REFERENCE_PREFIX', '') or ''
+            prefix = prefix.replace('%s', '')
 
             status = getattr(response, 'status', None)
 
-            # TODO: get grossAmount to populate a payment with methods
+            # get grossAmount to populate a payment with methods
             try:
                 # self.cart = Cart.objects.get(
                 #     reference_code=reference.replace(PREFIX, '')
                 # )
-                ref = reference.replace(PREFIX, '')
+                ref = reference.replace(prefix, '')
                 qs = Cart.objects.filter(
                     reference_code=ref
                 ) or Cart.objects.filter(id=ref)

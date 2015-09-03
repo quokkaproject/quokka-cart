@@ -451,10 +451,8 @@ class Cart(Publishable, db.DynamicDocument):
 
     def remove_item(self, **kwargs):
         deleted = self.items.delete(**kwargs)
-        print self.reference
         if self.reference and hasattr(self.reference, 'remove_item'):
             self.reference.remove_item(**kwargs)
-            print self.reference
         return deleted
 
     def checkout(self, processor=None, *args, **kwargs):
@@ -493,8 +491,8 @@ class Cart(Publishable, db.DynamicDocument):
 
         pipelines = self.build_pipeline()
         index = session.get('cart_pipeline_index', 0)
-        Pipeline = import_string(pipelines[index])
-        return Pipeline(self, pipelines, index)._preprocess()
+        pipeline = import_string(pipelines[index])
+        return pipeline(self, pipelines, index)._preprocess()
 
     def set_processor(self, processor=None):
         if not self.processor:

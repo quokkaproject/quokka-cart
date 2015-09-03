@@ -1,14 +1,12 @@
 # coding: utf-8
 
 from quokka.core.app import QuokkaModule
-module = QuokkaModule("cart", __name__,
-                      template_folder="templates", static_folder="static")
-
 from .views import CartView, SetItemView, RemoveItemView, SetProcessorView, \
     CheckoutView, HistoryView, ConfirmationView, NotificationView
-
 from .functions import get_current_cart
 
+module = QuokkaModule("cart", __name__,
+                      template_folder="templates", static_folder="static")
 
 # template globals
 module.add_app_template_global(get_current_cart)

@@ -20,4 +20,4 @@ class ListCart(Command):
             carts = carts(title=title)
 
         for cart in carts:
-            print(cart)
+            print(cart)  # noqa

@@ -61,14 +61,14 @@ class CartPipeline(object):
     def go(self, index=None, name=None):
         index = index or self.index + 1
         try:
-            Pipeline = import_string(self.pipeline[index])
+            pipeline = import_string(self.pipeline[index])
         except IndexError:
-            raise PipelineOverflow("Pipeline overflow at %s" % index)
+            raise PipelineOverflow("pipeline overflow at %s" % index)
 
-        if not issubclass(Pipeline, CartPipeline):
+        if not issubclass(pipeline, CartPipeline):
             raise ValueError("Pipelines should be subclass of CartPipeline")
 
-        return Pipeline(self.cart, self.pipeline, index)
+        return pipeline(self.cart, self.pipeline, index)
 
 
 class CartItemPipeline(CartPipeline):

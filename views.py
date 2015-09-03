@@ -69,7 +69,6 @@ class CartView(BaseView):
 class SetItemView(BaseView):
     def post(self):
         cart = Cart.get_cart()
-        print request.form
         params = {k: v for k, v in request.form.items() if not k == "next"}
         item = cart.set_item(**params)
         return self.redirect(item=item)
