@@ -4,7 +4,7 @@
 from quokka import admin
 from quokka.modules.posts.admin import PostAdmin
 from quokka.core.admin.models import ModelAdmin
-from quokka.core.admin import _, _l
+from quokka.utils.translation import _, _l
 from quokka.core.widgets import TextEditor, PrepopulatedText
 from .models import Cart, Processor
 

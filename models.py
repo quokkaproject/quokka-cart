@@ -7,7 +7,10 @@ from quokka.utils.translation import _l
 from quokka.utils import get_current_user, lazy_str_setting
 from quokka.core.templates import render_template
 from quokka.core.db import db
-from quokka.core.models import Publishable, Ordered, Dated, Content
+from quokka.core.models.signature import (
+    Publishable, Ordered, Dated
+)
+from quokka.core.models.content import Content
 from quokka.modules.media.models import Image
 
 logger = logging.getLogger()
