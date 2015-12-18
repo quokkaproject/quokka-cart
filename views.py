@@ -102,7 +102,9 @@ class HistoryView(BaseView):
         context = {
             "carts": Cart.objects(belongs_to=get_current_user())
         }
-        return self.needs_login(next=url_for('cart.history')) or self.render(
+        return self.needs_login(
+            next=url_for('quokka.modules.cart.history')
+        ) or self.render(
             'cart/history.html', **context
         )
 

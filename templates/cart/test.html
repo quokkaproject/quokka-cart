@@ -2,7 +2,7 @@
 
 {% block content %}
 
-  <form action="{{url_for('cart.checkout')}}" method="POST">
+  <form action="{{url_for('quokka.modules.cart.checkout')}}" method="POST">
       <fieldset>
      <legend>Payment</legend>
       {%for processor in cart.get_available_processors() %}
