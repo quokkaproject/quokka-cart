@@ -1,7 +1,12 @@
 # coding: utf-8
 
+import logging
+
 from flask.ext.script import Command, Option
 from .models import Cart
+
+
+logger = logging.getLogger(__name__)
 
 
 class ListCart(Command):
@@ -20,4 +25,4 @@ class ListCart(Command):
             carts = carts(title=title)
 
         for cart in carts:
-            print(cart)  # noqa
+            logger.info('Cart: {}'.format(cart))

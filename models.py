@@ -1,8 +1,12 @@
 # coding: utf-8
+
 import datetime
 import logging
+import sys
+
 from werkzeug.utils import import_string
 from flask import session, current_app
+
 from quokka.utils.translation import _l
 from quokka.utils import get_current_user, lazy_str_setting
 from quokka.core.templates import render_template
@@ -12,6 +16,10 @@ from quokka.core.models.signature import (
 )
 from quokka.core.models.content import Content
 from quokka.modules.media.models import Image
+
+
+if sys.version_info.major == 3:
+    from functools import reduce
 
 logger = logging.getLogger()
 
